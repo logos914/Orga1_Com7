@@ -1,0 +1,224 @@
+name: Deploy Website
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.md'
+      - 'themes/**'
+      - 'website/**'
+      - '.github/workflows/deploy-website.yml'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgbm-dev gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
+          npm ci
+          
+      - name: Install Marp CLI
+        run: npm install -g @marp-team/marp-cli
+        
+      - name: Create output directory
+        run: mkdir -p dist/website
+        
+      - name: Generate HTML slides
+        run: |
+          find . -name "*.md" -not -path "*/node_modules/*" -not -path "*/dist/*" -not -path "*/\.*" | while read -r file; do
+            output_dir="dist/website/$(dirname "$file" | sed 's/^\.\///')"
+            mkdir -p "$output_dir"
+            filename=$(basename "$file" .md)
+            echo "Converting $file to HTML..."
+            marp --html --allow-local-files --theme-set ./themes/ "$file" -o "$output_dir/$filename.html"
+          done
+          
+      - name: Copy website files
+        run: |
+          cp -r website/* dist/website/
+          
+      - name: Generate index.html with latest content highlighted
+        run: |
+          # Obtener la semana más reciente
+          latest_week=$(find . -type d -name "Semana*" | sort -r | head -n 1 | sed 's/^\.\///')
+          
+          # Crear archivo index.html con la semana más reciente destacada
+          cat > dist/website/index.html << EOL
+          <!DOCTYPE html>
+          <html lang="es">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Organización del Computador 1 - Comisión 7</title>
+              <style>
+                  body {
+                      font-family: 'Helvetica Neue', Arial, sans-serif;
+                      line-height: 1.6;
+                      color: #333;
+                      max-width: 1200px;
+                      margin: 0 auto;
+                      padding: 20px;
+                  }
+                  header {
+                      background-color: #00759c;
+                      color: white;
+                      padding: 20px;
+                      text-align: center;
+                      margin-bottom: 30px;
+                      border-radius: 5px;
+                  }
+                  h1, h2, h3 {
+                      color: #00759c;
+                  }
+                  .latest {
+                      background-color: #f0f7fa;
+                      border-left: 5px solid #00759c;
+                      padding: 15px;
+                      margin-bottom: 30px;
+                      border-radius: 0 5px 5px 0;
+                  }
+                  .latest h2 {
+                      margin-top: 0;
+                  }
+                  .weeks {
+                      display: grid;
+                      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                      gap: 20px;
+                  }
+                  .week {
+                      border: 1px solid #ddd;
+                      border-radius: 5px;
+                      padding: 15px;
+                      transition: transform 0.3s ease;
+                  }
+                  .week:hover {
+                      transform: translateY(-5px);
+                      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                  }
+                  .week h3 {
+                      margin-top: 0;
+                      border-bottom: 2px solid #00759c;
+                      padding-bottom: 10px;
+                  }
+                  ul {
+                      padding-left: 20px;
+                  }
+                  li {
+                      margin-bottom: 8px;
+                  }
+                  a {
+                      color: #00759c;
+                      text-decoration: none;
+                  }
+                  a:hover {
+                      text-decoration: underline;
+                  }
+                  footer {
+                      margin-top: 50px;
+                      text-align: center;
+                      color: #666;
+                      font-size: 0.9em;
+                      padding-top: 20px;
+                      border-top: 1px solid #ddd;
+                  }
+                  .theme-switch {
+                      text-align: right;
+                      margin-bottom: 20px;
+                  }
+                  .theme-switch a {
+                      display: inline-block;
+                      padding: 5px 10px;
+                      background-color: #eee;
+                      border-radius: 3px;
+                      margin-left: 10px;
+                  }
+                  .theme-switch a:hover {
+                      background-color: #ddd;
+                  }
+                  .matrix-theme {
+                      background-color: #000;
+                      color: #00ff00;
+                  }
+              </style>
+          </head>
+          <body>
+              <header>
+                  <h1>Organización del Computador 1</h1>
+                  <p>Comisión 7 - Universidad Nacional de General Sarmiento</p>
+              </header>
+              
+              <div class="theme-switch">
+                  <span>Tema:</span>
+                  <a href="#" onclick="document.body.classList.remove('matrix-theme'); return false;">Institucional</a>
+                  <a href="#" onclick="document.body.classList.add('matrix-theme'); return false;">Matrix</a>
+              </div>
+              
+              <div class="latest">
+                  <h2>Contenido más reciente: $latest_week</h2>
+                  <p>Aquí encontrarás el material más reciente del curso.</p>
+                  <ul>
+          EOL
+          
+          # Agregar enlaces a las diapositivas de la semana más reciente
+          if [ -d "$latest_week" ]; then
+            find "$latest_week" -name "*.md" | sort | while read -r file; do
+              filename=$(basename "$file" .md)
+              echo "          <li><a href=\"$latest_week/$filename.html\">$filename</a> - <a href=\"$latest_week/$filename.pdf\">[PDF]</a></li>" >> dist/website/index.html
+            done
+          fi
+          
+          # Continuar con el resto del HTML
+          cat >> dist/website/index.html << EOL
+                  </ul>
+              </div>
+              
+              <h2>Todas las semanas</h2>
+              <div class="weeks">
+          EOL
+          
+          # Agregar todas las semanas
+          find . -type d -name "Semana*" | sort | while read -r week_dir; do
+            week=$(basename "$week_dir")
+            echo "      <div class=\"week\">" >> dist/website/index.html
+            echo "          <h3>$week</h3>" >> dist/website/index.html
+            echo "          <ul>" >> dist/website/index.html
+            
+            find "$week_dir" -name "*.md" | sort | while read -r file; do
+              filename=$(basename "$file" .md)
+              echo "              <li><a href=\"$week/$filename.html\">$filename</a> - <a href=\"$week/$filename.pdf\">[PDF]</a></li>" >> dist/website/index.html
+            done
+            
+            echo "          </ul>" >> dist/website/index.html
+            echo "      </div>" >> dist/website/index.html
+          done
+          
+          # Finalizar el HTML
+          cat >> dist/website/index.html << EOL
+              </div>
+              
+              <footer>
+                  <p>&copy; 2025 Organización del Computador 1 - Comisión 7 - UNGS</p>
+                  <p>Sitio generado automáticamente con <a href="https://github.com/marp-team/marp-cli" target="_blank">Marp</a></p>
+              </footer>
+          </body>
+          </html>
+          EOL
+          
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist/website
+          branch: gh-pages

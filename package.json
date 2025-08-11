@@ -1,0 +1,38 @@
+{
+  "name": "orga1-com7",
+  "version": "1.0.0",
+  "description": "Material para la materia Organización del Computador 1 - Comisión 7 (UNGS)",
+  "main": "index.js",
+  "scripts": {
+    "start": "marp --server .",
+    "build": "marp --html --pdf --allow-local-files --theme-set ./themes/",
+    "build:pdf": "marp --pdf --allow-local-files --theme-set ./themes/",
+    "build:html": "marp --html --allow-local-files --theme-set ./themes/",
+    "build:pptx": "marp --pptx --allow-local-files --theme-set ./themes/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/usuario/Orga1_Com7.git"
+  },
+  "keywords": [
+    "marp",
+    "slides",
+    "markdown",
+    "presentacion",
+    "universidad",
+    "computacion"
+  ],
+  "author": "Docente Organización del Computador 1 - Comisión 7",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/usuario/Orga1_Com7/issues"
+  },
+  "homepage": "https://github.com/usuario/Orga1_Com7#readme",
+  "dependencies": {
+    "@marp-team/marp-cli": "^3.0.0",
+    "@marp-team/marp-core": "^3.0.0"
+  },
+  "devDependencies": {
+    "puppeteer": "^20.0.0"
+  }
+}

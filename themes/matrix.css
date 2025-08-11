@@ -1,0 +1,297 @@
+/* 
+ * Tema Matrix/Terminator para Marp
+ * Organización del Computador 1 - Comisión 7 (UNGS)
+ * Inspirado en las interfaces de computadora de las películas Matrix y Terminator
+ */
+
+/* Importar tema base de Marp */
+@import 'default';
+
+/* Fuente monoespaciada para el efecto de terminal */
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
+/* Variables de color */
+:root {
+  --primary-color: #00ff00; /* Verde brillante característico de Matrix */
+  --secondary-color: #00cc00; /* Verde más oscuro */
+  --accent-color: #33ff33; /* Verde más claro */
+  --text-color: #00ff00;
+  --dim-text-color: #00aa00; /* Texto menos importante */
+  --background-color: #000000; /* Negro para el fondo */
+  --code-background: #001100; /* Verde muy oscuro para bloques de código */
+  --link-color: #00ffff; /* Cian para enlaces */
+  --header-color: #00ff00;
+  --footer-color: #008800;
+  --highlight-color: #ffffff; /* Blanco para resaltar */
+}
+
+/* Estilos generales */
+section {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  padding: 40px;
+  text-shadow: 0 0 5px var(--primary-color);
+  background-image: 
+    linear-gradient(rgba(0, 15, 0, 0.9), rgba(0, 15, 0, 0.9)),
+    repeating-linear-gradient(
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 0, 0.05) 2px,
+      rgba(0, 255, 0, 0.05) 4px
+    );
+}
+
+/* Efecto de escaneo */
+section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background-color: rgba(0, 255, 0, 0.5);
+  animation: scan 8s linear infinite;
+  z-index: 1;
+  opacity: 0.7;
+}
+
+@keyframes scan {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+
+/* Encabezados */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--header-color);
+  font-weight: bold;
+  font-family: 'VT323', 'Share Tech Mono', monospace;
+  letter-spacing: 1px;
+}
+
+h1 {
+  font-size: 2.5em;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 0.2em;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-size: 1.8em;
+}
+
+h3 {
+  font-size: 1.5em;
+}
+
+/* Enlaces */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--link-color);
+}
+
+a:hover {
+  text-shadow: 0 0 10px var(--link-color);
+}
+
+/* Listas */
+ul {
+  list-style-type: none;
+  margin-left: 1em;
+}
+
+ul li::before {
+  content: "> ";
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+ol {
+  margin-left: 1.5em;
+}
+
+li {
+  margin-bottom: 0.5em;
+}
+
+/* Bloques de código */
+pre {
+  background-color: var(--code-background);
+  border: 1px solid var(--secondary-color);
+  border-radius: 5px;
+  padding: 1em;
+  margin: 1em 0;
+  overflow: auto;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+code {
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  background-color: var(--code-background);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+/* Citas */
+blockquote {
+  border-left: 4px solid var(--primary-color);
+  padding-left: 1em;
+  color: var(--dim-text-color);
+  font-style: italic;
+}
+
+/* Tablas */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+  border: 1px solid var(--secondary-color);
+}
+
+th {
+  background-color: var(--code-background);
+  color: var(--primary-color);
+  padding: 0.5em;
+  text-align: left;
+  border: 1px solid var(--secondary-color);
+}
+
+td {
+  border: 1px solid var(--secondary-color);
+  padding: 0.5em;
+}
+
+tr:nth-child(even) {
+  background-color: rgba(0, 255, 0, 0.05);
+}
+
+/* Imágenes */
+img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--secondary-color);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+/* Encabezado y pie de página */
+header, footer {
+  font-size: 0.8em;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+header {
+  color: var(--header-color);
+  top: 20px;
+}
+
+footer {
+  color: var(--footer-color);
+  bottom: 20px;
+}
+
+/* Diapositiva de título (primera diapositiva) */
+section.lead {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding: 2em;
+}
+
+section.lead h1 {
+  font-size: 3em;
+  border: none;
+  margin-bottom: 0.2em;
+  animation: flicker 5s infinite;
+}
+
+@keyframes flicker {
+  0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
+  }
+  20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+    opacity: 0.8;
+    text-shadow: none;
+  }
+}
+
+section.lead h2 {
+  font-size: 2em;
+  color: var(--secondary-color);
+  margin-top: 0.2em;
+}
+
+section.lead h3 {
+  font-size: 1.5em;
+  color: var(--accent-color);
+  margin-top: 0.5em;
+}
+
+/* Paginación */
+section::after {
+  color: var(--footer-color);
+  font-size: 0.8em;
+  content: attr(data-marpit-pagination) "/" attr(data-marpit-pagination-total);
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* Fórmulas matemáticas (MathJax) */
+.math {
+  font-size: 1.2em;
+  color: var(--accent-color);
+}
+
+/* Diagramas (mermaid) */
+.mermaid {
+  text-align: center;
+}
+
+/* Resaltado de sintaxis para bloques de código */
+.hljs {
+  background-color: var(--code-background);
+  color: var(--primary-color);
+}
+
+.hljs-keyword {
+  color: #ff00ff; /* Magenta para palabras clave */
+}
+
+.hljs-string {
+  color: #ffff00; /* Amarillo para cadenas */
+}
+
+.hljs-number {
+  color: #00ffff; /* Cian para números */
+}
+
+.hljs-comment {
+  color: var(--dim-text-color); /* Verde oscuro para comentarios */
+}
+
+/* Animaciones */
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+.typing {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing 3.5s steps(40, end);
+}
+
+/* Efecto de terminal */
+.terminal::before {
+  content: "$ ";
+  color: var(--primary-color);
+}
+
+.terminal {
+  background-color: var(--code-background);
+  padding: 1em;
+  border-radius: 5px;
+  margin: 1em 0;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}

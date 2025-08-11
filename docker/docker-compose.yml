@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  marp:
+    image: karreg/marp-devcontainer:latest
+    container_name: orga1-com7-marp
+    volumes:
+      - ..:/app
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+    command: marp --server --watch --allow-local-files --theme-set /app/themes/ /app
+    restart: unless-stopped
+
+  pdf-generator:
+    image: karreg/marp-devcontainer:latest
+    container_name: orga1-com7-pdf
+    volumes:
+      - ..:/app
+    environment:
+      - NODE_ENV=production
+    command: >
+      sh -c "cd /app &&
+             mkdir -p dist/pdf &&
+             find . -name '*.md' -not -path '*/node_modules/*' -not -path '*/dist/*' -not -path '*/templates/*' |
+             xargs -I{} marp --pdf --allow-local-files --theme-set /app/themes/ {} -o /app/dist/pdf/"
+    profiles:
+      - pdf
+
+  html-generator:
+    image: karreg/marp-devcontainer:latest
+    container_name: orga1-com7-html
+    volumes:
+      - ..:/app
+    environment:
+      - NODE_ENV=production
+    command: >
+      sh -c "cd /app &&
+             mkdir -p dist/html &&
+             find . -name '*.md' -not -path '*/node_modules/*' -not -path '*/dist/*' -not -path '*/templates/*' |
+             xargs -I{} marp --html --allow-local-files --theme-set /app/themes/ {} -o /app/dist/html/"
+    profiles:
+      - html
+
+  website-generator:
+    image: karreg/marp-devcontainer:latest
+    container_name: orga1-com7-website
+    volumes:
+      - ..:/app
+    environment:
+      - NODE_ENV=production
+    command: >
+      sh -c "cd /app &&
+             mkdir -p dist/website &&
+             marp --html --allow-local-files --theme-set /app/themes/ -o /app/dist/website/ ."
+    profiles:
+      - website

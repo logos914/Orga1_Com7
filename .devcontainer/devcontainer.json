@@ -1,0 +1,42 @@
+{
+  "name": "marp",
+    "dockerFile": "Dockerfile",
+    "context": "..",
+    "postAttachCommand": ".devcontainer/post_attach.sh",
+
+ 
+    "forwardPorts": [
+        8000
+    ],
+    "customizations": {
+        // Configure properties specific to VS Code.
+        "vscode": {
+            "settings": {
+                // LF by default instead of CRLF
+                "files.eol": "\n",
+                // Terminal list
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "/bin/bash"
+                    },
+                    "zsh": {
+                        "path": "/usr/bin/zsh"
+                    }
+                },
+                // Use bash instead if you feel like it
+                "terminal.integrated.defaultProfile.linux": "zsh"
+            },
+            "extensions": [
+                "eamodio.gitlens",
+                "yzhang.markdown-all-in-one",
+                "davidanson.vscode-markdownlint",
+                "marp-team.marp-vscode",
+                "gitlab.gitlab-workflow"
+            ]
+        }
+    },
+    "remoteUser": "gitpod",
+    "containerUser": "gitpod",
+   "userEnvProbe": "loginInteractiveShell"
+
+}
